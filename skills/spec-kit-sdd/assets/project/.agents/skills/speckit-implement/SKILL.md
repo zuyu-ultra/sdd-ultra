@@ -1,0 +1,292 @@
+---
+name: speckit-implement
+description: 处理并执行 tasks.md 中定义的全部任务；对存量项目强制复用旧实现、沿用同类惯例，并以变更前后同一基线阻断老功能回归和 Bug 修复引入的新缺陷。
+---
+
+# 按任务实施
+
+## 用户输入
+
+```text
+$ARGUMENTS
+```
+
+如果用户输入非空，必须在继续之前加以考虑。
+
+## 执行前检查
+
+### 本地零 Git 命令策略（最高优先级）
+
+读取 `.specify/task-management.json`。如果 `backend` 为 `local` 或 `vcs` 为 `none`，本阶段不得执行 `git`、检查 `.git`、读取 remote/branch/status/diff/log，且 before/after hooks 中所有 `speckit.git.*` 或会启动 `git` 的钩子一律跳过；此规则覆盖钩子的强制标志。
+
+### 任务批准关卡（阻塞）
+
+- 在运行任何实现钩子、修改源码或勾选任务前，确认用户已在看到当前 `tasks.md` 后明确回复“批准任务”或等价表达。
+- 如果当前对话中没有批准证据，或 `spec.md`、`plan.md`、`tasks.md` 在批准后发生实质修改，报告任务文件路径与变化并询问是否批准，然后**停止**。
+- 不得把用户在规格生成前提出的“实现全部内容”视为任务批准，也不得用检查表 PASS 代替人工批准。
+- 读取 `.specify/task-management.json` 并报告后端。GitLab 模式下，Issue 同步状态不替代 `tasks.md` 批准；本地模式下禁止隐式创建外部 Issue，并强制 `vcs: none`：不得执行任何 Git 命令或 Git extension hook。
+
+**检查实现前的扩展钩子**：
+
+- 在实际执行每个 hook 前，对用户批准时的 `spec.md`、`plan.md`、`tasks.md`、constitution，以及 plan 回归矩阵/变更预算点名的源码与测试路径分别计算 SHA-256；保存批准版本的三个产物摘要和 hook ID。不得使用 Git。
+
+- 检查项目根目录中是否存在 `.specify/extensions.yml`。
+- 如果存在，读取该文件并查找 `hooks.before_implement` 下的条目。
+- 如果 YAML 无法解析或无效，静默跳过钩子检查并照常继续。
+- 过滤掉 `enabled` 明确为 `false` 的钩子；没有 `enabled` 字段的钩子默认视为已启用。
+- 如果任务后端是 `local`，过滤所有 extension 为 `git`、命令 ID 以 `speckit.git.` 开头或实际执行会启动 `git` 的钩子；即使标为强制也不得执行，报告已按本地零 Git 策略跳过。
+- 对每个剩余钩子，不要尝试解释或计算 `condition` 表达式：
+  - 如果钩子没有 `condition` 字段，或该字段为 null/空值，则将其视为可执行。
+  - 如果钩子定义了非空 `condition`，跳过该钩子，把条件计算留给 `HookExecutor` 实现。
+- 对每个可执行钩子，根据其 `optional` 标志输出以下内容。Codex 中调用扩展 skill 时，把规范命令 ID 中的点替换为连字符并添加 `$` 前缀，例如 `speckit.git.commit` 调用为 `$speckit-git-commit`：
+  - **可选钩子**（`optional: true`）：
+
+    ```text
+    ## 扩展钩子
+
+    **可选前置钩子**：{extension}
+    命令 ID：`{command}`
+    说明：{description}
+
+    提示：{prompt}
+    执行方式：使用与 `{command}` 对应的 Codex `$speckit-*` skill
+    ```
+
+  - **强制钩子**（`optional: false`）：
+
+    ```text
+    ## 扩展钩子
+
+    **自动前置钩子**：{extension}
+    正在执行：`{command}`
+    EXECUTE_COMMAND: {command}
+
+    等待钩子命令完成，然后再继续执行“大纲”。
+    ```
+
+    输出上述区块后，必须实际调用钩子并等待其完成，然后重新计算同一组 SHA-256。采用当前 agent/session 中自己运行该命令时所用的方式；实际调用形式可能不同于上面显示的规范 `{command}` ID，例如 Codex skills 模式使用 `$speckit-*`。仅输出区块并不等于运行钩子。
+    - `spec.md`、`plan.md` 或 `tasks.md` 的任一内容变化都会使当前批准失效；立即停止，在展示 post-hook 精确版本后重新请求对应批准，不得进入“大纲”。仅实现过程中由本 Skill 勾选 checkbox 不适用于此 before-hook 例外。
+    - constitution 变化：治理检查失效，停止并返回 `$speckit-constitution`/`$speckit-plan`。
+    - 源码、测试或配置变化：把变化明确归因到 hook，重新搜索定义/调用方/同类惯例，重建影响面、允许路径和变更预算，并运行计划中与批准前相同的基线命令。出现计划外路径/符号、Bug 复现不再按预期失败、任一新失败或验证不可运行时立即停止。
+    - 只有产物摘要仍等于用户批准版本，且 post-hook 源码状态通过重建后的完整基线，才可继续。连续两次执行同一 hook 都改变跟踪输入时停止并报告不稳定 hook。
+- 上述逐 hook 的 SHA-256、批准失效、基线重建、回归重验和不稳定 hook 规则适用于每个**实际执行**的可选或强制钩子；`optional` 只决定是否自动执行。可选钩子一旦被执行，必须等待完成并应用完全相同的前后哈希比较。
+- 如果没有注册钩子，或 `.specify/extensions.yml` 不存在，则静默跳过。
+
+## 大纲
+
+1. 从仓库根目录运行：
+
+   ```bash
+   python3 .specify/scripts/python/check_prerequisites.py --json --require-tasks --include-tasks
+   ```
+
+   解析 `FEATURE_DIR` 和 `AVAILABLE_DOCS` 列表。所有路径必须为绝对路径。对于参数中类似 `I'm Groot` 的单引号，使用转义语法，例如 `'I'\''m Groot'`；也可以尽量改用双引号：`"I'm Groot"`。
+
+2. **检查检查表状态**（如果 `FEATURE_DIR/checklists/` 存在）：
+
+   - 把检查表标记视为只读关卡：扫描 checkbox 状态、报告结果，并在需要时询问是否继续；不得修改检查表文件或标记。
+   - `checklists/requirements.md` 是由 `$speckit-specify` 和 `$speckit-clarify` 维护的内置规格质量检查表；由 `$speckit-checklist` 生成的自定义检查表，是归审阅者所有的需求质量审阅产物。
+   - 对自定义检查表而言，`[x]` 表示审阅者认定该需求质量标准已满足；它不表示实现工作已经完成。
+   - 扫描 `checklists/` 目录中的全部检查表文件。
+   - 对每个检查表统计：
+     - 总项数：所有匹配 `- [ ]`、`- [X]` 或 `- [x]` 的行。
+     - 已勾选项：匹配 `- [X]` 或 `- [x]` 的行。
+     - 未勾选项：匹配 `- [ ]` 的行。
+   - 创建状态表：
+
+     ```text
+     | 检查表 | 总数 | 已勾选 | 未勾选 | 状态 |
+     |--------|-----:|-------:|-------:|------|
+     | ux.md | 12 | 12 | 0 | ✓ PASS |
+     | test.md | 8 | 5 | 3 | ✗ FAIL |
+     | security.md | 6 | 6 | 0 | ✓ PASS |
+     ```
+
+   - 计算总体状态：
+     - **PASS**：所有检查表的未勾选项均为 0。
+     - **FAIL**：一个或多个检查表存在未勾选项。
+   - **如果任一检查表存在未勾选项**：
+     - 展示包含未勾选项数量的表格。
+     - **停止**并询问：“部分检查表仍有未勾选项。是否仍要继续实现？（yes/no）”
+     - 等待用户响应后才能继续。
+     - 如果用户回答 `no`、`wait` 或 `stop`，停止执行。
+     - 如果用户回答 `yes`、`proceed` 或 `continue`，只有普通审阅项可继续第 3 步。凡未勾选项涉及 `PB-###`、复用证据、`NM-###`、Bug 复现、基线或回归验证，均为不可覆盖的红线，必须停止并修订 spec/plan/tasks。
+   - **如果所有检查表均已勾选**：
+     - 展示表格，说明所有检查表已通过。
+     - 自动继续第 3 步。
+
+3. 加载并分析实现上下文：
+
+   - **必需**：读取 `tasks.md`，获取完整任务清单和执行计划。
+   - **必需**：读取 `plan.md`，获取技术栈、架构和文件结构。
+   - **若存在**：读取 `data-model.md`，获取实体和关系。
+   - **若存在**：读取 `contracts/`，获取 API 规格和测试要求。
+   - **若存在**：读取 `research.md`，获取技术决策和约束。
+   - **若存在**：读取 `.specify/memory/constitution.md`，获取治理约束。
+   - **若存在**：读取 `quickstart.md`，获取集成场景。
+   - 模板、replace override、preset、extension 或 hook 不得删除或弱化本阶段的兼容红线；若文档缺少必要区块，必须停止并回到对应的 spec/plan/tasks 阶段补齐。
+
+4. **存量兼容执行前硬关卡**（在任何源码写入前完成）：
+
+   - 按目标类/函数 → 同模块/包 → 同业务域 → 同项目重新搜索现有符号和相邻测试，确认每个实现任务都引用可复用/扩展的真实符号，或引用已批准的 `NM-###`。
+   - 对每个 `NM-###` 复核搜索范围、候选和不能复用的理由。若发现等价旧实现，或实施时才发现需要计划中没有的未经批准的新符号（method/class/module/helper/endpoint/schema/dependency），立即停止；原 plan/tasks 批准失效，必须回到计划并请用户重新批准。
+   - 确认命名、错误处理、依赖注入、日志、异步模式、目录布局和测试写法均采用同类或同模块的真实项目惯例；禁止无关重构和另起平行架构。
+   - 运行 `plan.md` 回归矩阵中的变更前基线并记录完整命令、退出码、通过/已知失败清单。结果与计划不一致、出现未知失败或验证环境不可用时停止，不得写代码或宣称安全。
+   - Bug 修复先运行复现测试，确认它在修改前以预期原因失败，且相邻正常场景通过；否则停止并修正复现任务。
+   - 记录本次允许修改的路径与变更预算。未经计划批准不得扩大范围；不得借机整理、重命名或迁移无关代码。
+
+5. **项目准备验证**：
+
+   - 默认只读验证项目准备状态。创建或修改任何 ignore 文件/配置前，必须同时满足三个条件：`plan.md` 明确说明本需求将引入或改变对应工具/产物；该 ignore 文件或配置的**精确路径**位于获批变更预算/允许路径中；`tasks.md` 有已批准的对应任务 ID。缺少任一条件就不得写入，只记录“保持不变”或把确实阻塞需求的问题返回 `$speckit-plan`。
+   - 既有项目中仅探测到 Docker、ESLint、Prettier、npm、Terraform、Helm 或其配置文件，绝不构成编辑授权；不得顺手清理、补全或现代化既有 ignore。任何获批修改还必须沿用该文件现有排序、注释与模式风格，并限制为本需求所需的最小增量。
+
+   **检测与创建逻辑：**
+
+   - 仅当任务后端不是 `local`、用户当前请求明确需要版本控制准备，并且 `.gitignore` 精确路径和任务同时通过上述三重授权关卡时，才可检查以下命令并创建或验证 `.gitignore`：
+
+     ```sh
+     git rev-parse --git-dir 2>/dev/null
+     ```
+
+   - 本地模式不得运行上面的命令、不得检查 `.git`，也不得仅为版本控制创建或修改 `.gitignore`；其他 ignore 文件同样必须先通过三重授权关卡。
+
+   - `plan.md` 明确由本需求引入/改变 Docker，且 `.dockerignore` 已获批 → 创建/验证 `.dockerignore`；仅存在 `Dockerfile*` 不得触发写入。
+   - `plan.md` 明确由本需求引入/改变 ESLint，且 `.eslintignore` 或 `eslint.config.*` 中 `ignores` 的精确路径已获批 → 才可创建/修改对应配置；仅存在 `.eslintrc*`/`eslint.config.*` 不得触发写入。
+   - `plan.md` 明确由本需求引入/改变 Prettier，且 `.prettierignore` 已获批 → 创建/验证 `.prettierignore`；仅存在 `.prettierrc*` 不得触发写入。
+   - `plan.md` 明确由本需求引入/改变 npm 发布产物，且 `.npmignore` 已获批 → 创建/验证 `.npmignore`；仅存在 `.npmrc`/`package.json` 不得触发写入。
+   - `plan.md` 明确由本需求引入/改变 Terraform 产物，且 `.terraformignore` 已获批 → 创建/验证 `.terraformignore`；仅存在 `*.tf` 不得触发写入。
+   - `plan.md` 明确由本需求引入/改变 Helm chart，且 `.helmignore` 已获批 → 创建/验证 `.helmignore`；仅存在 chart 不得触发写入。
+
+   **如果已获批的 ignore 文件存在**：验证本需求必需模式，只按现有风格追加获批的最小缺失项；不得扩展到无关通用清理。
+
+   **如果已获批的 ignore 文件不存在**：仅为 `plan.md` 明确新引入的工具创建，并仅包含本需求与项目标准要求的模式；禁止因技术探测创建文件。
+
+   **按技术划分的通用模式**（依据 `plan.md` 中的技术栈）：
+
+   - **Node.js/JavaScript/TypeScript**：`node_modules/`、`dist/`、`build/`、`*.log`、`.env*`
+   - **Python**：`__pycache__/`、`*.pyc`、`.venv/`、`venv/`、`dist/`、`*.egg-info/`
+   - **Java**：`target/`、`*.class`、`*.jar`、`.gradle/`、`build/`
+   - **C#/.NET**：`bin/`、`obj/`、`*.user`、`*.suo`、`packages/`
+   - **Go**：`*.exe`、`*.test`、`vendor/`、`*.out`
+   - **Ruby**：`.bundle/`、`log/`、`tmp/`、`*.gem`、`vendor/bundle/`
+   - **PHP**：`vendor/`、`*.log`、`*.cache`、`*.env`
+   - **Rust**：`target/`、`debug/`、`release/`、`*.rs.bk`、`*.rlib`、`*.prof*`、`.idea/`、`*.log`、`.env*`
+   - **Kotlin**：`build/`、`out/`、`.gradle/`、`.idea/`、`*.class`、`*.jar`、`*.iml`、`*.log`、`.env*`
+   - **C++**：`build/`、`bin/`、`obj/`、`out/`、`*.o`、`*.so`、`*.a`、`*.exe`、`*.dll`、`.idea/`、`*.log`、`.env*`
+   - **C**：`build/`、`bin/`、`obj/`、`out/`、`*.o`、`*.a`、`*.so`、`*.exe`、`*.dll`、`autom4te.cache/`、`config.status`、`config.log`、`.idea/`、`*.log`、`.env*`
+   - **Swift**：`.build/`、`DerivedData/`、`*.swiftpm/`、`Packages/`
+   - **R**：`.Rproj.user/`、`.Rhistory`、`.RData`、`.Ruserdata`、`*.Rproj`、`packrat/`、`renv/`
+   - **通用**：`.DS_Store`、`Thumbs.db`、`*.tmp`、`*.swp`、`.vscode/`、`.idea/`
+
+   **工具特定模式：**
+
+   - **Docker**：`node_modules/`、`.git/`、`Dockerfile*`、`.dockerignore`、`*.log*`、`.env*`、`coverage/`
+   - **ESLint**：`node_modules/`、`dist/`、`build/`、`coverage/`、`*.min.js`
+   - **Prettier**：`node_modules/`、`dist/`、`build/`、`coverage/`、`package-lock.json`、`yarn.lock`、`pnpm-lock.yaml`
+   - **Terraform**：`.terraform/`、`*.tfstate*`、`*.tfvars`、`.terraform.lock.hcl`
+   - **Kubernetes/k8s**：`*.secret.yaml`、`secrets/`、`.kube/`、`kubeconfig*`、`*.key`、`*.crt`
+
+6. 解析 `tasks.md` 结构并提取：
+
+   - **任务阶段**：准备（Setup）、测试（Tests）、核心（Core）、集成（Integration）、完善（Polish）。
+   - **任务依赖**：顺序执行规则和并行执行规则。
+   - **任务详情**：ID、描述、文件路径、并行标记 `[P]`。
+   - **执行流程**：顺序和依赖要求。
+
+7. 按任务计划执行实现：
+
+   - **逐阶段执行**：完成一个阶段后再进入下一阶段。
+   - **尊重依赖**：顺序任务按顺序运行；标记 `[P]` 的任务可以并行。
+   - **遵循 TDD 方法**：先执行测试任务，再执行对应的实现任务。
+   - **按文件协调**：影响同一文件的任务必须串行执行。
+   - **验证检查点**：进入下一阶段前验证当前阶段已完成。
+
+8. 实现执行规则：
+
+   - **先确认存量基线**：已有项目先完成基线、复用和影响面任务；只有明确 Greenfield 才初始化项目结构。
+   - **测试先于代码**：新需求先补 `PB-###` 保护与目标测试；Bug 修复先得到正确失败的复现测试。
+   - **最小实现**：直接调用现有实现 > 兼容扩展现有实现 > 提炼共享实现 > 仅按已批准 `NM-###` 新增。沿用目标类/模块的命名、控制流、错误语义和测试风格。
+   - **集成工作**：完成数据库连接、中间件、日志和外部服务。
+   - **完善与验证**：只做规格要求范围内的单元测试、性能和文档工作；不得顺手重构、删除或削弱旧测试来获得绿色结果。
+   - 每个逻辑任务后运行最窄目标测试；每阶段后运行受影响测试；结束时运行回归矩阵及与变更前相同的项目标准 lint/typecheck/build/test。
+
+9. 进度跟踪和错误处理：
+
+   - 每完成一个任务后报告进度。
+   - 任一非并行任务失败时停止执行。
+   - 对并行任务 `[P]`，只有失败与兼容/回归红线无关且不会污染其他任务时才可保留成功任务；任何基线、`PB-###`、复现、目标或回归验证失败都立即停止所有后续任务。
+   - 提供带调试上下文的清晰错误信息。
+   - 如果实现无法继续，建议下一步行动。
+   - **重要**：只有对应目标测试通过且未出现新回归时，任务才可在 tasks 文件中标记为 `[X]`。无法运行验证时保持未完成。
+
+10. 完成验证：
+
+   - 验证所有必需任务均已完成。
+   - 检查实现功能与原始规格一致。
+   - 逐项报告每个 `PB-###`、Bug 复现、相邻边界、目标测试和受影响调用方验证结果。
+   - 运行与变更前完全相同的基线命令，并运行项目标准的 lint/typecheck/build/test；不得出现基线之外的新失败。
+   - 确认实现遵循技术计划。
+   - 发现老功能被破坏或 Bug 修复引入新失败时，立即停止并报告红线命中；不得继续堆补丁、不得勾选任务、不得声称完成。
+
+注意：此 skill 假设 `tasks.md` 中存在完整的任务拆分。如果任务不完整或缺失，建议先运行 `$speckit-tasks` 重新生成任务清单。
+
+## 强制执行后钩子
+
+**在向用户报告完成之前，必须完整执行本节。**
+
+- 检查项目根目录中是否存在 `.specify/extensions.yml`。
+- 在实际执行每个 after hook 前，对当前 `spec.md`、`plan.md`、`tasks.md`、constitution，以及全部实际修改/测试/配置路径分别计算 SHA-256，并记录 hook ID。
+- 如果不存在，或 `hooks.after_implement` 下没有注册钩子，跳到“完成报告”。
+- 如果存在，读取该文件并查找 `hooks.after_implement` 下的条目。
+- 如果 YAML 无法解析或无效，静默跳过钩子检查并继续“完成报告”。
+- 过滤掉 `enabled` 明确为 `false` 的钩子；没有 `enabled` 字段的钩子默认视为已启用。
+- 对每个剩余钩子，不要尝试解释或计算 `condition` 表达式：
+  - 如果钩子没有 `condition` 字段，或该字段为 null/空值，则将其视为可执行。
+  - 如果钩子定义了非空 `condition`，跳过该钩子，把条件计算留给 `HookExecutor` 实现。
+- 对每个可执行钩子，根据其 `optional` 标志输出以下内容：
+  - **强制钩子**（`optional: false`）——**必须为每个强制钩子输出 `EXECUTE_COMMAND:`**：
+
+    ```text
+    ## 扩展钩子
+
+    **自动钩子**：{extension}
+    正在执行：`{command}`
+    EXECUTE_COMMAND: {command}
+    ```
+
+    输出上述区块后，必须实际调用钩子并等待其完成，然后重新计算同一组 SHA-256。采用当前 agent/session 中自己运行该命令时所用的方式；实际调用形式可能不同于上面显示的规范 `{command}` ID，例如 Codex skills 模式使用 `$speckit-*`。仅输出区块并不等于运行钩子。
+
+  - **可选钩子**（`optional: true`）：
+
+    ```text
+    ## 扩展钩子
+
+    **可选钩子**：{extension}
+    命令 ID：`{command}`
+    说明：{description}
+
+    提示：{prompt}
+    执行方式：使用与 `{command}` 对应的 Codex `$speckit-*` skill
+    ```
+
+钩子可能改变代码或项目状态。任何实际执行的 after hook 完成后：
+
+- `spec.md`、`plan.md`、constitution 或除本 Skill 正常完成标记之外的 `tasks.md` 变化，会使批准和完成报告失效；停止并返回对应阶段重新审阅，不能用旧批准覆盖 post-hook 内容。
+- 源码、测试或配置变化时，重新搜索定义/调用方与同类惯例、重建实际影响面，并重新运行受影响目标测试、全部 `PB-###` 回归和项目标准验证；新增失败同样触发红线并阻止完成。
+- 报告每个 hook 的 before/after SHA-256 和变化路径。连续两次执行同一 hook 都改变跟踪输入时停止并报告不稳定 hook，不得循环放行。
+- 本段适用于每个**实际执行**的可选或强制 after hook；`optional` 不豁免哈希、批准/报告失效或回归重验。可选钩子一旦被执行，必须等待完成再进入完成报告。
+
+## 完成报告
+
+报告最终状态，并汇总：复用/扩展的现有符号与路径、实际使用的 `NM-###`、修改范围、变更前后同一基线命令结果、每个 `PB-###`、Bug 复现及相邻场景结果、项目标准 lint/typecheck/build/test 结果和任何仍未验证项。不得用“看起来没影响”替代证据。
+
+## 完成条件（Done When）
+
+- [ ] `tasks.md` 中所有任务都已完成并标记为 `[X]`。
+- [ ] 已根据规格、计划和测试覆盖验证实现。
+- [ ] 未创建任何未经批准的符号；实现遵循目标类/同模块惯例并优先复用旧实现。
+- [ ] 新需求未破坏任何 `PB-###`；Bug 修复的复现、相邻路径与完整回归均通过，且变更后没有基线之外的新失败。
+- [ ] 无法运行的验证已阻止完成声明，而不是被跳过。
+- [ ] 每个实际 before/after hook 均有前后 SHA-256；before hook 后已重新核对批准版本，源码变化已重建影响面和基线，after hook 变化已完成重验或阻断。
+- [ ] 已按照“强制执行后钩子”中的规则调度或跳过扩展钩子。
+- [ ] 已向用户报告完成情况并汇总已完成工作。

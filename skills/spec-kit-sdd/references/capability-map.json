@@ -1,0 +1,2405 @@
+{
+  "commands": [
+    {
+      "help": "Produce a single versioned distributable artifact (.zip).",
+      "parameters": [
+        {
+          "help": "Bundle directory (default: cwd)",
+          "kind": "option",
+          "multiple": false,
+          "name": "path",
+          "opts": [
+            "--path"
+          ],
+          "required": false
+        },
+        {
+          "help": "Output directory for the artifact",
+          "kind": "option",
+          "multiple": false,
+          "name": "output",
+          "opts": [
+            "--output"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle build",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Register a project-scoped catalog source and persist it.",
+      "parameters": [
+        {
+          "help": "Catalog URL",
+          "kind": "option",
+          "multiple": false,
+          "name": "url",
+          "opts": [
+            "url"
+          ],
+          "required": true
+        },
+        {
+          "help": "install-allowed | discovery-only",
+          "kind": "option",
+          "multiple": false,
+          "name": "policy",
+          "opts": [
+            "--policy"
+          ],
+          "required": false
+        },
+        {
+          "help": "Source priority (lower = higher)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "--priority"
+          ],
+          "required": false
+        },
+        {
+          "help": "Explicit source id",
+          "kind": "option",
+          "multiple": false,
+          "name": "source_id",
+          "opts": [
+            "--id"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle catalog add",
+      "risks": [
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Print the active, priority-ordered catalog stack with scope and policy.",
+      "parameters": [],
+      "path": "specify bundle catalog list",
+      "risks": []
+    },
+    {
+      "help": "Remove a project-scoped catalog source (built-in defaults can't be deleted).",
+      "parameters": [
+        {
+          "help": "Source id or url to remove",
+          "kind": "option",
+          "multiple": false,
+          "name": "id_or_url",
+          "opts": [
+            "id_or_url"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify bundle catalog remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show full metadata and the fully expanded component set (== what install adds).",
+      "parameters": [
+        {
+          "help": "Bundle id to inspect",
+          "kind": "option",
+          "multiple": false,
+          "name": "bundle_id",
+          "opts": [
+            "bundle_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Do not access the network",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        },
+        {
+          "help": "Emit JSON to stdout",
+          "kind": "option",
+          "multiple": false,
+          "name": "as_json",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle info",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Ensure the project is initialized (idempotent), then optionally install a bundle.",
+      "parameters": [
+        {
+          "help": "Optional bundle to install after init",
+          "kind": "option",
+          "multiple": false,
+          "name": "bundle",
+          "opts": [
+            "bundle"
+          ],
+          "required": false
+        },
+        {
+          "help": "Integration override",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration",
+          "opts": [
+            "--integration"
+          ],
+          "required": false
+        },
+        {
+          "help": "Do not access the network",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle init",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Install a bundle's full component set through each primitive's machinery.\n\n``bundle_id`` may be a catalog bundle id, or a local path to a built\nartifact (``.zip``), a bundle directory, or a ``bundle.yml`` file. Local\nsources install directly without consulting the catalog stack.",
+      "parameters": [
+        {
+          "help": "Bundle id (from the catalog stack) or a local path to a .zip artifact, bundle directory, or bundle.yml",
+          "kind": "option",
+          "multiple": false,
+          "name": "bundle_id",
+          "opts": [
+            "bundle_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Override integration",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration",
+          "opts": [
+            "--integration"
+          ],
+          "required": false
+        },
+        {
+          "help": "Do not access the network",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle install",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List bundles currently installed in the project with versions.",
+      "parameters": [
+        {
+          "help": "Emit JSON to stdout",
+          "kind": "option",
+          "multiple": false,
+          "name": "as_json",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle list",
+      "risks": []
+    },
+    {
+      "help": "Uninstall only the components this bundle contributed (no collateral removals).",
+      "parameters": [
+        {
+          "help": "Installed bundle id to remove",
+          "kind": "option",
+          "multiple": false,
+          "name": "bundle_id",
+          "opts": [
+            "bundle_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify bundle remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List matching bundles across the active catalog stack.",
+      "parameters": [
+        {
+          "help": "Optional text query",
+          "kind": "option",
+          "multiple": false,
+          "name": "query",
+          "opts": [
+            "query"
+          ],
+          "required": false
+        },
+        {
+          "help": "Do not access the network",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        },
+        {
+          "help": "Emit JSON to stdout",
+          "kind": "option",
+          "multiple": false,
+          "name": "as_json",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle search",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Re-resolve and refresh a bundle's components via each primitive's update path.",
+      "parameters": [
+        {
+          "help": "Bundle id, or omit with --all",
+          "kind": "option",
+          "multiple": false,
+          "name": "bundle_id",
+          "opts": [
+            "bundle_id"
+          ],
+          "required": false
+        },
+        {
+          "help": "Update every installed bundle",
+          "kind": "option",
+          "multiple": false,
+          "name": "all_bundles",
+          "opts": [
+            "--all"
+          ],
+          "required": false
+        },
+        {
+          "help": "Override integration",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration",
+          "opts": [
+            "--integration"
+          ],
+          "required": false
+        },
+        {
+          "help": "Do not access the network",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle update",
+      "risks": [
+        "code-execution",
+        "destructive",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Report whether the manifest is well-formed and references resolve.",
+      "parameters": [
+        {
+          "help": "Bundle directory or bundle.yml (default: cwd)",
+          "kind": "option",
+          "multiple": false,
+          "name": "path",
+          "opts": [
+            "--path"
+          ],
+          "required": false
+        },
+        {
+          "help": "Do not access catalogs; verify references against bundled/installed only",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify bundle validate",
+      "risks": []
+    },
+    {
+      "help": "Check that all required tools are installed.",
+      "parameters": [],
+      "path": "specify check",
+      "risks": []
+    },
+    {
+      "help": "Resolve and run an event-driven command script with stdin payload.",
+      "parameters": [
+        {
+          "help": "Name of the command to execute",
+          "kind": "option",
+          "multiple": false,
+          "name": "command_name",
+          "opts": [
+            "command_name"
+          ],
+          "required": true
+        },
+        {
+          "help": "Canonical event name (e.g., session_start)",
+          "kind": "option",
+          "multiple": false,
+          "name": "event_name",
+          "opts": [
+            "event_name"
+          ],
+          "required": true
+        },
+        {
+          "help": "Per-handler timeout in seconds (passed through from the native hook config)",
+          "kind": "option",
+          "multiple": false,
+          "name": "timeout",
+          "opts": [
+            "timeout"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify event run",
+      "risks": [
+        "code-execution",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Install an extension.",
+      "parameters": [
+        {
+          "help": "Extension name or path",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": true
+        },
+        {
+          "help": "Install from local directory",
+          "kind": "option",
+          "multiple": false,
+          "name": "dev",
+          "opts": [
+            "--dev"
+          ],
+          "required": false
+        },
+        {
+          "help": "Install from custom URL",
+          "kind": "option",
+          "multiple": false,
+          "name": "from_url",
+          "opts": [
+            "--from"
+          ],
+          "required": false
+        },
+        {
+          "help": "Overwrite if already installed",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        },
+        {
+          "help": "Resolution priority (lower = higher precedence, default 10)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "--priority"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify extension add",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Add a catalog to .specify/extension-catalogs.yml.",
+      "parameters": [
+        {
+          "help": "Catalog URL (must use HTTPS)",
+          "kind": "option",
+          "multiple": false,
+          "name": "url",
+          "opts": [
+            "url"
+          ],
+          "required": true
+        },
+        {
+          "help": "Catalog name",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "--name"
+          ],
+          "required": true
+        },
+        {
+          "help": "Priority (lower = higher priority)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "--priority"
+          ],
+          "required": false
+        },
+        {
+          "help": "Allow extensions from this catalog to be installed",
+          "kind": "option",
+          "multiple": false,
+          "name": "install_allowed",
+          "opts": [
+            "--install-allowed",
+            "--no-install-allowed"
+          ],
+          "required": false
+        },
+        {
+          "help": "Description of the catalog",
+          "kind": "option",
+          "multiple": false,
+          "name": "description",
+          "opts": [
+            "--description"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify extension catalog add",
+      "risks": [
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List all active extension catalogs.",
+      "parameters": [],
+      "path": "specify extension catalog list",
+      "risks": []
+    },
+    {
+      "help": "Remove a catalog from .specify/extension-catalogs.yml.",
+      "parameters": [
+        {
+          "help": "Catalog name to remove",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "name"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify extension catalog remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Disable an extension without removing it.",
+      "parameters": [
+        {
+          "help": "Extension ID or name to disable",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify extension disable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Enable a disabled extension.",
+      "parameters": [
+        {
+          "help": "Extension ID or name to enable",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify extension enable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show detailed information about an extension.",
+      "parameters": [
+        {
+          "help": "Extension ID or name",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify extension info",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "List installed extensions.",
+      "parameters": [
+        {
+          "help": "Show available extensions from catalog",
+          "kind": "option",
+          "multiple": false,
+          "name": "available",
+          "opts": [
+            "--available"
+          ],
+          "required": false
+        },
+        {
+          "help": "Show both installed and available",
+          "kind": "option",
+          "multiple": false,
+          "name": "all_extensions",
+          "opts": [
+            "--all"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify extension list",
+      "risks": []
+    },
+    {
+      "help": "Uninstall an extension.",
+      "parameters": [
+        {
+          "help": "Extension ID or name to remove",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": true
+        },
+        {
+          "help": "Don't remove config files",
+          "kind": "option",
+          "multiple": false,
+          "name": "keep_config",
+          "opts": [
+            "--keep-config"
+          ],
+          "required": false
+        },
+        {
+          "help": "Skip confirmation",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify extension remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Search for available extensions in catalog.",
+      "parameters": [
+        {
+          "help": "Search query (optional)",
+          "kind": "option",
+          "multiple": false,
+          "name": "query",
+          "opts": [
+            "query"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by tag",
+          "kind": "option",
+          "multiple": false,
+          "name": "tag",
+          "opts": [
+            "--tag"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by author",
+          "kind": "option",
+          "multiple": false,
+          "name": "author",
+          "opts": [
+            "--author"
+          ],
+          "required": false
+        },
+        {
+          "help": "Show only verified extensions",
+          "kind": "option",
+          "multiple": false,
+          "name": "verified",
+          "opts": [
+            "--verified"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify extension search",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Set the resolution priority of an installed extension.",
+      "parameters": [
+        {
+          "help": "Extension ID or name",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": true
+        },
+        {
+          "help": "New priority (lower = higher precedence)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "priority"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify extension set-priority",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Update extension(s) to latest version.",
+      "parameters": [
+        {
+          "help": "Extension ID or name to update (or all)",
+          "kind": "option",
+          "multiple": false,
+          "name": "extension",
+          "opts": [
+            "extension"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify extension update",
+      "risks": [
+        "code-execution",
+        "destructive",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Initialize a new Specify project.\n\nProject files are scaffolded from assets bundled inside the specify-cli\npackage, so initialization does not need network access and templates\nmatch the installed CLI version.\n\nThis command will:\n1. Check that required tools are installed\n2. Let you choose your coding agent integration, or default to Copilot\n   in non-interactive sessions\n3. Install bundled Spec Kit templates, scripts, workflow, and shared\n   project infrastructure\n4. Set up coding agent integration commands and optional presets\n\nExamples:\n    specify init my-project\n    specify init my-project --integration claude\n    specify init --ignore-agent-tools my-project\n    specify init . --integration claude         # Initialize in current directory\n    specify init .                     # Initialize in current directory (interactive integration selection)\n    specify init --here --integration claude    # Alternative syntax for current directory\n    specify init --here --integration codex --integration-options=\"--skills\"\n    specify init --here --integration codebuddy\n    specify init --here --integration vibe      # Initialize with Mistral Vibe support\n    specify init --here\n    specify init --here --force  # Skip confirmation when current directory not empty\n    specify init my-project --integration claude   # Claude installs skills by default\n    specify init --here --integration gemini\n    specify init my-project --integration generic --integration-options=\"--commands-dir .myagent/commands/\"  # Bring your own agent; requires --commands-dir\n    specify init my-project --integration claude --preset healthcare-compliance  # With preset\n    specify init my-project --integration copilot --extension git  # With bundled extension\n    specify init my-project --extension git --extension selftest  # Multiple extensions\n    specify init my-project --extension ./my-extensions/custom-ext  # Local path extension\n    specify init my-project --extension https://example.com/extensions/my-ext.zip --trust-extension-urls  # URL extension (non-interactive)",
+      "parameters": [
+        {
+          "help": "Name for your new project directory (optional if using --here, or use '.' for current directory)",
+          "kind": "option",
+          "multiple": false,
+          "name": "project_name",
+          "opts": [
+            "project_name"
+          ],
+          "required": false
+        },
+        {
+          "help": "Script type to use: sh, ps, or py",
+          "kind": "option",
+          "multiple": false,
+          "name": "script_type",
+          "opts": [
+            "--script"
+          ],
+          "required": false
+        },
+        {
+          "help": "Skip checks for coding agent tools like Claude Code",
+          "kind": "option",
+          "multiple": false,
+          "name": "ignore_agent_tools",
+          "opts": [
+            "--ignore-agent-tools"
+          ],
+          "required": false
+        },
+        {
+          "help": "Initialize project in the current directory instead of creating a new one",
+          "kind": "option",
+          "multiple": false,
+          "name": "here",
+          "opts": [
+            "--here"
+          ],
+          "required": false
+        },
+        {
+          "help": "Force merge/overwrite when using --here (skip confirmation)",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        },
+        {
+          "help": "Deprecated (no-op). Previously: skip SSL/TLS verification.",
+          "kind": "option",
+          "multiple": false,
+          "name": "skip_tls",
+          "opts": [
+            "--skip-tls"
+          ],
+          "required": false
+        },
+        {
+          "help": "Deprecated. Previously: show verbose diagnostic output; currently only prints additional diagnostic details on failure.",
+          "kind": "option",
+          "multiple": false,
+          "name": "debug",
+          "opts": [
+            "--debug"
+          ],
+          "required": false
+        },
+        {
+          "help": "Deprecated (no-op). Previously: GitHub token for API requests.",
+          "kind": "option",
+          "multiple": false,
+          "name": "github_token",
+          "opts": [
+            "--github-token"
+          ],
+          "required": false
+        },
+        {
+          "help": "Deprecated (no-op). All scaffolding now uses bundled assets.",
+          "kind": "option",
+          "multiple": false,
+          "name": "offline",
+          "opts": [
+            "--offline"
+          ],
+          "required": false
+        },
+        {
+          "help": "Install a preset during initialization (by preset ID)",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset",
+          "opts": [
+            "--preset"
+          ],
+          "required": false
+        },
+        {
+          "help": "AI coding agent integration to use (e.g. --integration copilot). See 'specify check' for available integrations.",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration",
+          "opts": [
+            "--integration"
+          ],
+          "required": false
+        },
+        {
+          "help": "Options for the integration (e.g. --integration-options=\"--commands-dir .myagent/cmds\")",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration_options",
+          "opts": [
+            "--integration-options"
+          ],
+          "required": false
+        },
+        {
+          "help": "Install an extension during initialization (bundled name, local path, or HTTPS URL). Repeatable.",
+          "kind": "option",
+          "multiple": true,
+          "name": "extensions",
+          "opts": [
+            "--extension"
+          ],
+          "required": false
+        },
+        {
+          "help": "Pre-authorize installing extensions from external URLs without the interactive trust prompt (required for non-interactive URL installs).",
+          "kind": "option",
+          "multiple": false,
+          "name": "trust_extension_urls",
+          "opts": [
+            "--trust-extension-urls"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify init",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Add an integration catalog source to the project config.",
+      "parameters": [
+        {
+          "help": "Catalog URL to add (HTTPS required, except http://localhost, http://127.0.0.1, or http://[::1] for local testing)",
+          "kind": "option",
+          "multiple": false,
+          "name": "url",
+          "opts": [
+            "url"
+          ],
+          "required": true
+        },
+        {
+          "help": "Catalog name",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "--name"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration catalog add",
+      "risks": [
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List configured integration catalog sources.",
+      "parameters": [],
+      "path": "specify integration catalog list",
+      "risks": []
+    },
+    {
+      "help": "Remove an integration catalog source by 0-based index.",
+      "parameters": [
+        {
+          "help": "Catalog index to remove (from 'catalog list')",
+          "kind": "option",
+          "multiple": false,
+          "name": "index",
+          "opts": [
+            "index"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify integration catalog remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show catalog details for a single integration.",
+      "parameters": [
+        {
+          "help": "Integration ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration_id",
+          "opts": [
+            "integration_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify integration info",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Install an integration into an existing project.",
+      "parameters": [
+        {
+          "help": "Integration key to install (e.g. claude, copilot)",
+          "kind": "option",
+          "multiple": false,
+          "name": "key",
+          "opts": [
+            "key"
+          ],
+          "required": true
+        },
+        {
+          "help": "Script type: sh, ps, or py (default: from init-options.json or platform default)",
+          "kind": "option",
+          "multiple": false,
+          "name": "script",
+          "opts": [
+            "--script"
+          ],
+          "required": false
+        },
+        {
+          "help": "Allow multi-install when integrations are not declared safe",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        },
+        {
+          "help": "Options for the integration (e.g. --integration-options=\"--commands-dir .myagent/cmds\")",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration_options",
+          "opts": [
+            "--integration-options"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration install",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List available integrations and installed status.",
+      "parameters": [
+        {
+          "help": "Browse full catalog (built-in + community)",
+          "kind": "option",
+          "multiple": false,
+          "name": "catalog",
+          "opts": [
+            "--catalog"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration list",
+      "risks": []
+    },
+    {
+      "help": "Create a minimal built-in integration package and test skeleton.",
+      "parameters": [
+        {
+          "help": "Integration key in lowercase kebab-case, e.g. my-agent",
+          "kind": "option",
+          "multiple": false,
+          "name": "key",
+          "opts": [
+            "key"
+          ],
+          "required": true
+        },
+        {
+          "help": "Scaffold type: markdown, skills, toml, yaml",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration_type",
+          "opts": [
+            "--type"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration scaffold",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Search for integrations in the active catalog stack.",
+      "parameters": [
+        {
+          "help": "Search query (optional)",
+          "kind": "option",
+          "multiple": false,
+          "name": "query",
+          "opts": [
+            "query"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by tag",
+          "kind": "option",
+          "multiple": false,
+          "name": "tag",
+          "opts": [
+            "--tag"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by author",
+          "kind": "option",
+          "multiple": false,
+          "name": "author",
+          "opts": [
+            "--author"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration search",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Report the current project's integration status without changing files.",
+      "parameters": [
+        {
+          "help": "Emit machine-readable integration status.",
+          "kind": "option",
+          "multiple": false,
+          "name": "json_output",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration status",
+      "risks": []
+    },
+    {
+      "help": "Switch from the current integration to a different one.",
+      "parameters": [
+        {
+          "help": "Integration key to switch to",
+          "kind": "option",
+          "multiple": false,
+          "name": "target",
+          "opts": [
+            "target"
+          ],
+          "required": true
+        },
+        {
+          "help": "Script type: sh, ps, or py (default: from init-options.json or platform default)",
+          "kind": "option",
+          "multiple": false,
+          "name": "script",
+          "opts": [
+            "--script"
+          ],
+          "required": false
+        },
+        {
+          "help": "Force removal of modified files during uninstall of the previous integration",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        },
+        {
+          "help": "Also overwrite shared infrastructure files even if you customized them (otherwise customizations are preserved)",
+          "kind": "option",
+          "multiple": false,
+          "name": "refresh_shared_infra",
+          "opts": [
+            "--refresh-shared-infra"
+          ],
+          "required": false
+        },
+        {
+          "help": "Options for the target integration",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration_options",
+          "opts": [
+            "--integration-options"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration switch",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Uninstall an integration, safely preserving modified files.",
+      "parameters": [
+        {
+          "help": "Integration key to uninstall (default: current integration)",
+          "kind": "option",
+          "multiple": false,
+          "name": "key",
+          "opts": [
+            "key"
+          ],
+          "required": false
+        },
+        {
+          "help": "Remove files even if modified",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration uninstall",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Upgrade an integration by reinstalling with diff-aware file handling.\n\nCompares manifest hashes to detect locally modified files and\nblocks the upgrade unless --force is used.",
+      "parameters": [
+        {
+          "help": "Integration key to upgrade (default: current integration)",
+          "kind": "option",
+          "multiple": false,
+          "name": "key",
+          "opts": [
+            "key"
+          ],
+          "required": false
+        },
+        {
+          "help": "Force upgrade even if files are modified",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        },
+        {
+          "help": "Script type: sh, ps, or py (default: from init-options.json or platform default)",
+          "kind": "option",
+          "multiple": false,
+          "name": "script",
+          "opts": [
+            "--script"
+          ],
+          "required": false
+        },
+        {
+          "help": "Options for the integration",
+          "kind": "option",
+          "multiple": false,
+          "name": "integration_options",
+          "opts": [
+            "--integration-options"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration upgrade",
+      "risks": [
+        "code-execution",
+        "destructive",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Set the default integration without uninstalling other integrations.",
+      "parameters": [
+        {
+          "help": "Installed integration key to make the default",
+          "kind": "option",
+          "multiple": false,
+          "name": "key",
+          "opts": [
+            "key"
+          ],
+          "required": true
+        },
+        {
+          "help": "Overwrite existing shared infrastructure files, including customizations, while changing the default",
+          "kind": "option",
+          "multiple": false,
+          "name": "force",
+          "opts": [
+            "--force"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify integration use",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Install a preset.",
+      "parameters": [
+        {
+          "help": "Preset ID to install from catalog",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset_id",
+          "opts": [
+            "preset_id"
+          ],
+          "required": false
+        },
+        {
+          "help": "Install from a .zip, .tar.gz, or .tgz URL",
+          "kind": "option",
+          "multiple": false,
+          "name": "from_url",
+          "opts": [
+            "--from"
+          ],
+          "required": false
+        },
+        {
+          "help": "Install from local directory (development mode)",
+          "kind": "option",
+          "multiple": false,
+          "name": "dev",
+          "opts": [
+            "--dev"
+          ],
+          "required": false
+        },
+        {
+          "help": "Resolution priority (lower = higher precedence, default 10)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "--priority"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify preset add",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Add a catalog to .specify/preset-catalogs.yml.",
+      "parameters": [
+        {
+          "help": "Catalog URL (must use HTTPS)",
+          "kind": "option",
+          "multiple": false,
+          "name": "url",
+          "opts": [
+            "url"
+          ],
+          "required": true
+        },
+        {
+          "help": "Catalog name",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "--name"
+          ],
+          "required": true
+        },
+        {
+          "help": "Priority (lower = higher priority)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "--priority"
+          ],
+          "required": false
+        },
+        {
+          "help": "Allow presets from this catalog to be installed",
+          "kind": "option",
+          "multiple": false,
+          "name": "install_allowed",
+          "opts": [
+            "--install-allowed",
+            "--no-install-allowed"
+          ],
+          "required": false
+        },
+        {
+          "help": "Description of the catalog",
+          "kind": "option",
+          "multiple": false,
+          "name": "description",
+          "opts": [
+            "--description"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify preset catalog add",
+      "risks": [
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List all active preset catalogs.",
+      "parameters": [],
+      "path": "specify preset catalog list",
+      "risks": []
+    },
+    {
+      "help": "Remove a catalog from .specify/preset-catalogs.yml.",
+      "parameters": [
+        {
+          "help": "Catalog name to remove",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "name"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset catalog remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Disable a preset without removing it.",
+      "parameters": [
+        {
+          "help": "Preset ID to disable",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset_id",
+          "opts": [
+            "preset_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset disable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Enable a disabled preset.",
+      "parameters": [
+        {
+          "help": "Preset ID to enable",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset_id",
+          "opts": [
+            "preset_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset enable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show detailed information about a preset.",
+      "parameters": [
+        {
+          "help": "Preset ID to get info about",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset_id",
+          "opts": [
+            "preset_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset info",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "List installed presets.",
+      "parameters": [],
+      "path": "specify preset list",
+      "risks": []
+    },
+    {
+      "help": "Remove an installed preset.",
+      "parameters": [
+        {
+          "help": "Preset ID to remove",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset_id",
+          "opts": [
+            "preset_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show which template will be resolved for a given name.",
+      "parameters": [
+        {
+          "help": "Template name to resolve (e.g., spec-template)",
+          "kind": "option",
+          "multiple": false,
+          "name": "template_name",
+          "opts": [
+            "template_name"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset resolve",
+      "risks": []
+    },
+    {
+      "help": "Search for presets in the catalog.",
+      "parameters": [
+        {
+          "help": "Search query",
+          "kind": "option",
+          "multiple": false,
+          "name": "query",
+          "opts": [
+            "query"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by tag",
+          "kind": "option",
+          "multiple": false,
+          "name": "tag",
+          "opts": [
+            "--tag"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by author",
+          "kind": "option",
+          "multiple": false,
+          "name": "author",
+          "opts": [
+            "--author"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify preset search",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Set the resolution priority of an installed preset.",
+      "parameters": [
+        {
+          "help": "Preset ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "preset_id",
+          "opts": [
+            "preset_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "New priority (lower = higher precedence)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "priority"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify preset set-priority",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Check whether a newer specify-cli release is available. Read-only.\n\nThis command only checks for updates; it does not modify your installation.\nUse `specify self upgrade` to actually perform the upgrade once you've seen\nthe result here, or `specify self upgrade --dry-run` to preview the\ninstaller command without running it.",
+      "parameters": [],
+      "path": "specify self check",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Upgrade specify-cli to the latest release (or a pinned --tag).\n\nBare invocation executes immediately with no confirmation prompt, matching\npip install -U / uv tool upgrade / npm update conventions. Use --dry-run\nto preview without mutating anything. See `specify self check` for the\nnon-destructive read-only counterpart.\n\nDetection classifies the runtime into uv-tool / pipx / uvx (ephemeral) /\nsource-checkout / unsupported. Only uv-tool and pipx are upgraded\nautomatically; the other three paths print path-specific guidance and\nexit 0.\n\nExit codes:\n  0      success or no-op-success (already on latest, --dry-run, or\n         non-upgradable path with guidance shown)\n  1      target-tag resolution failure or --tag regex validation failure\n  2      verification mismatch when the installer exited 0 but\n         `specify --version` does not resolve to the target tag; if the\n         installer itself exits 2, that installer failure code is\n         propagated verbatim\n  3      installer binary not found on PATH, or resolved installer path is\n         missing / non-executable\n  124    internal installer timeout when SPECIFY_UPGRADE_TIMEOUT_SECS is set,\n         or a real installer exit code 124 propagated verbatim; scripts\n         should treat 124 as ambiguous and inspect the failure message\n  other  installer exit code propagated verbatim\n\nEnvironment variables:\n  SPECIFY_UPGRADE_TIMEOUT_SECS  Optional integer/float seconds. Caps how\n    long the installer subprocess may run. Unset (default) means no\n    timeout — interrupt with Ctrl+C if the installer hangs.",
+      "parameters": [
+        {
+          "help": "Print the preview (method, current, target, installer argv) and exit 0 without launching the installer subprocess.",
+          "kind": "option",
+          "multiple": false,
+          "name": "dry_run",
+          "opts": [
+            "--dry-run"
+          ],
+          "required": false
+        },
+        {
+          "help": "Pin the target version (vX.Y.Z\\[suffix]). Without --tag, the latest stable release is resolved via GitHub Releases.",
+          "kind": "option",
+          "multiple": false,
+          "name": "tag",
+          "opts": [
+            "--tag"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify self upgrade",
+      "risks": [
+        "destructive",
+        "network",
+        "runtime-write"
+      ]
+    },
+    {
+      "help": "Display version and system information.",
+      "parameters": [
+        {
+          "help": "Show local CLI feature capabilities.",
+          "kind": "option",
+          "multiple": false,
+          "name": "features",
+          "opts": [
+            "--features"
+          ],
+          "required": false
+        },
+        {
+          "help": "Emit feature capabilities as JSON. Requires --features.",
+          "kind": "option",
+          "multiple": false,
+          "name": "json_output",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify version",
+      "risks": []
+    },
+    {
+      "help": "Install a workflow from catalog, URL, or local path.",
+      "parameters": [
+        {
+          "help": "Workflow ID, URL, or local path",
+          "kind": "option",
+          "multiple": false,
+          "name": "source",
+          "opts": [
+            "source"
+          ],
+          "required": true
+        },
+        {
+          "help": "Install from a local workflow YAML file or directory",
+          "kind": "option",
+          "multiple": false,
+          "name": "dev",
+          "opts": [
+            "--dev"
+          ],
+          "required": false
+        },
+        {
+          "help": "Install from a custom URL",
+          "kind": "option",
+          "multiple": false,
+          "name": "from_url",
+          "opts": [
+            "--from"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow add",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Add a workflow catalog source.",
+      "parameters": [
+        {
+          "help": "Catalog URL to add",
+          "kind": "option",
+          "multiple": false,
+          "name": "url",
+          "opts": [
+            "url"
+          ],
+          "required": true
+        },
+        {
+          "help": "Catalog name",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "--name"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow catalog add",
+      "risks": [
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "List configured workflow catalog sources.",
+      "parameters": [],
+      "path": "specify workflow catalog list",
+      "risks": []
+    },
+    {
+      "help": "Remove a workflow catalog source by index.",
+      "parameters": [
+        {
+          "help": "Catalog index to remove (from 'catalog list')",
+          "kind": "option",
+          "multiple": false,
+          "name": "index",
+          "opts": [
+            "index"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow catalog remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Disable a workflow without removing it.",
+      "parameters": [
+        {
+          "help": "Workflow ID to disable",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow disable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Enable a disabled workflow.",
+      "parameters": [
+        {
+          "help": "Workflow ID to enable",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow enable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show workflow details and step graph.",
+      "parameters": [
+        {
+          "help": "Workflow ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow info",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "List installed workflows.",
+      "parameters": [],
+      "path": "specify workflow list",
+      "risks": []
+    },
+    {
+      "help": "Add a project-local overlay for a workflow.",
+      "parameters": [
+        {
+          "help": "Path to overlay YAML file",
+          "kind": "option",
+          "multiple": false,
+          "name": "source",
+          "opts": [
+            "source"
+          ],
+          "required": true
+        },
+        {
+          "help": "Resolution priority (lower = higher precedence, default 10)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "--priority"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow overlay add",
+      "risks": [
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Disable a project-local overlay.",
+      "parameters": [
+        {
+          "help": "Workflow ID the overlay extends",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Overlay ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "overlay_id",
+          "opts": [
+            "overlay_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow overlay disable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Enable a project-local overlay.",
+      "parameters": [
+        {
+          "help": "Workflow ID the overlay extends",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Overlay ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "overlay_id",
+          "opts": [
+            "overlay_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow overlay enable",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "List overlays for a workflow.",
+      "parameters": [
+        {
+          "help": "Workflow ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow overlay list",
+      "risks": []
+    },
+    {
+      "help": "Remove a project-local overlay.",
+      "parameters": [
+        {
+          "help": "Workflow ID the overlay extends",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Overlay ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "overlay_id",
+          "opts": [
+            "overlay_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow overlay remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Set the priority of a project-local overlay.",
+      "parameters": [
+        {
+          "help": "Workflow ID the overlay extends",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Overlay ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "overlay_id",
+          "opts": [
+            "overlay_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "New priority (lower = higher precedence)",
+          "kind": "option",
+          "multiple": false,
+          "name": "priority",
+          "opts": [
+            "priority"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow overlay set-priority",
+      "risks": [
+        "project-write"
+      ]
+    },
+    {
+      "help": "Uninstall a workflow.",
+      "parameters": [
+        {
+          "help": "Workflow ID to uninstall",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow remove",
+      "risks": [
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Show layer attribution for a resolved workflow.",
+      "parameters": [
+        {
+          "help": "Workflow ID to resolve",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow resolve",
+      "risks": []
+    },
+    {
+      "help": "Resume a paused or failed workflow run.",
+      "parameters": [
+        {
+          "help": "Run ID to resume",
+          "kind": "option",
+          "multiple": false,
+          "name": "run_id",
+          "opts": [
+            "run_id"
+          ],
+          "required": true
+        },
+        {
+          "help": "Updated input values as key=value pairs",
+          "kind": "option",
+          "multiple": true,
+          "name": "input_values",
+          "opts": [
+            "--input",
+            "-i"
+          ],
+          "required": false
+        },
+        {
+          "help": "Emit the resume outcome as a single JSON object instead of formatted text.",
+          "kind": "option",
+          "multiple": false,
+          "name": "json_output",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow resume",
+      "risks": [
+        "code-execution",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Run a workflow from an installed ID or local YAML path.",
+      "parameters": [
+        {
+          "help": "Workflow ID or YAML file path",
+          "kind": "option",
+          "multiple": false,
+          "name": "source",
+          "opts": [
+            "source"
+          ],
+          "required": true
+        },
+        {
+          "help": "Input values as key=value pairs",
+          "kind": "option",
+          "multiple": true,
+          "name": "input_values",
+          "opts": [
+            "--input",
+            "-i"
+          ],
+          "required": false
+        },
+        {
+          "help": "Emit the run outcome as a single JSON object instead of formatted text.",
+          "kind": "option",
+          "multiple": false,
+          "name": "json_output",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow run",
+      "risks": [
+        "code-execution",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Search workflow catalogs.",
+      "parameters": [
+        {
+          "help": "Search query",
+          "kind": "option",
+          "multiple": false,
+          "name": "query",
+          "opts": [
+            "query"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by tag",
+          "kind": "option",
+          "multiple": false,
+          "name": "tag",
+          "opts": [
+            "--tag"
+          ],
+          "required": false
+        },
+        {
+          "help": "Filter by author",
+          "kind": "option",
+          "multiple": false,
+          "name": "author",
+          "opts": [
+            "--author"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow search",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Show workflow run status.",
+      "parameters": [
+        {
+          "help": "Run ID to inspect (shows all if omitted)",
+          "kind": "option",
+          "multiple": false,
+          "name": "run_id",
+          "opts": [
+            "run_id"
+          ],
+          "required": false
+        },
+        {
+          "help": "Emit run status as a single JSON object instead of formatted text.",
+          "kind": "option",
+          "multiple": false,
+          "name": "json_output",
+          "opts": [
+            "--json"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow status",
+      "risks": []
+    },
+    {
+      "help": "Install a custom step type from the step catalog.",
+      "parameters": [
+        {
+          "help": "Step type ID from catalog",
+          "kind": "option",
+          "multiple": false,
+          "name": "step_id",
+          "opts": [
+            "step_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow step add",
+      "risks": [
+        "code-execution",
+        "network",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Add a step catalog source.",
+      "parameters": [
+        {
+          "help": "Catalog URL to add",
+          "kind": "option",
+          "multiple": false,
+          "name": "url",
+          "opts": [
+            "url"
+          ],
+          "required": true
+        },
+        {
+          "help": "Catalog name",
+          "kind": "option",
+          "multiple": false,
+          "name": "name",
+          "opts": [
+            "--name"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow step catalog add",
+      "risks": []
+    },
+    {
+      "help": "List configured step catalog sources.",
+      "parameters": [],
+      "path": "specify workflow step catalog list",
+      "risks": []
+    },
+    {
+      "help": "Remove a step catalog source by index.",
+      "parameters": [
+        {
+          "help": "Catalog index to remove (from 'step catalog list')",
+          "kind": "option",
+          "multiple": false,
+          "name": "index",
+          "opts": [
+            "index"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow step catalog remove",
+      "risks": []
+    },
+    {
+      "help": "Show details for a step type.",
+      "parameters": [
+        {
+          "help": "Step type ID",
+          "kind": "option",
+          "multiple": false,
+          "name": "step_id",
+          "opts": [
+            "step_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow step info",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "List installed step types (built-in and custom).",
+      "parameters": [],
+      "path": "specify workflow step list",
+      "risks": []
+    },
+    {
+      "help": "Uninstall a custom step type.",
+      "parameters": [
+        {
+          "help": "Step type ID to uninstall",
+          "kind": "option",
+          "multiple": false,
+          "name": "step_id",
+          "opts": [
+            "step_id"
+          ],
+          "required": true
+        }
+      ],
+      "path": "specify workflow step remove",
+      "risks": [
+        "code-execution",
+        "destructive",
+        "project-write"
+      ]
+    },
+    {
+      "help": "Search the step type catalog.",
+      "parameters": [
+        {
+          "help": "Search query",
+          "kind": "option",
+          "multiple": false,
+          "name": "query",
+          "opts": [
+            "query"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow step search",
+      "risks": [
+        "network"
+      ]
+    },
+    {
+      "help": "Update installed workflow(s) to the latest catalog version.",
+      "parameters": [
+        {
+          "help": "Workflow ID to update (default: all)",
+          "kind": "option",
+          "multiple": false,
+          "name": "workflow_id",
+          "opts": [
+            "workflow_id"
+          ],
+          "required": false
+        }
+      ],
+      "path": "specify workflow update",
+      "risks": [
+        "code-execution",
+        "destructive",
+        "network",
+        "project-write"
+      ]
+    }
+  ],
+  "commit": "83883a2ebad7e7de667fd00381b100d597faf846",
+  "leaf_command_count": 84,
+  "repository": "https://github.com/github/spec-kit",
+  "schema_version": 1,
+  "version": "0.16.4.dev0"
+}

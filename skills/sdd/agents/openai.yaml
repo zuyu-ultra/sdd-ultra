@@ -1,0 +1,4 @@
+interface:
+  display_name: "SDD 中文流程"
+  short_description: "通过短名称启动完整中文版 Spec Kit SDD 工作流"
+  default_prompt: "使用 $sdd 开始中文版规格驱动开发；先选择任务管理后端，并在 spec、plan、tasks 后分别等待我的批准。"

@@ -1,0 +1,39 @@
+# [PROJECT_NAME] 项目宪章
+
+<!-- 本文件定义项目不可妥协的工程原则。请用明确、可测试的规则替换所有占位符。 -->
+
+## 核心原则
+
+### [PRINCIPLE_1_NAME]
+
+[PRINCIPLE_1_BODY]
+
+### [PRINCIPLE_2_NAME]
+
+[PRINCIPLE_2_BODY]
+
+### [PRINCIPLE_3_NAME]
+
+[PRINCIPLE_3_BODY]
+
+### [PRINCIPLE_4_NAME]
+
+[PRINCIPLE_4_BODY]
+
+### [PRINCIPLE_5_NAME]
+
+[PRINCIPLE_5_BODY]
+
+## [SECTION_2_NAME]
+
+[SECTION_2_CONTENT]
+
+## [SECTION_3_NAME]
+
+[SECTION_3_CONTENT]
+
+## 治理
+
+[GOVERNANCE_RULES]
+
+**版本**：[CONSTITUTION_VERSION] | **批准日期**：[RATIFICATION_DATE] | **最后修订**：[LAST_AMENDED_DATE]

@@ -1,0 +1,113 @@
+{
+  "skill_name": "spec-kit-sdd",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "请审计当前 spec-kit-sdd Skill 是否完整复制了固定上游 Spec Kit 的全部能力。不要只读 README：验证固定 commit/version、vendored 完整性、CLI 叶子命令数、integration 数、三类 helper、内置 extension/preset/workflow、中文 10 阶段，并用中文给出可复现证据。",
+      "expected_output": "报告固定 0.16.4.dev0/83883a2，验证 539 个上游仓库文件、28 wheels、84 个 CLI 叶子命令、38 integrations、18 helper scripts、4 extensions、2 presets、1 workflow、10 个完整中文阶段，并引用 verifier/manifest 的成功结果。",
+      "expectations": [
+        "使用固定 Skill 内的 verifier、manifest 或 capability map，而不是 PATH 上的 specify",
+        "准确报告 commit 83883a2ebad7e7de667fd00381b100d597faf846 与版本 0.16.4.dev0",
+        "准确报告 84 个 CLI 叶子命令、38 integrations 和 10 个中文核心阶段",
+        "说明完整仓库镜像为 539 个文件且不含 Git object database",
+        "报告验证命令的实际退出状态，而不是只做静态宣称"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "在一个新的临时空目录中，用 spec-kit-sdd 完成官方 Codex skills 模式初始化并叠加中文资产。要求全程离线、Python helper、跳过 agent 工具探测；随后检查 locale/upstream 元数据、10 个中文阶段、官方 integration manifest 健康和幂等性。不要改动我的工作区。",
+      "expected_output": "在临时目录通过固定运行时执行官方 init，安全叠加中文资产，install_project --check 和 integration status --json 都成功，第二次叠加无更新，工作区未变化。",
+      "expectations": [
+        "通过 scripts/specify_runtime.py 而非 PATH specify 执行官方 init",
+        "初始化参数包含 codex、--skills、py 和 --ignore-agent-tools",
+        "中文叠加后存在恰好 10 个 speckit-* SKILL.md",
+        "install_project.py --check 返回 ready，integration status 返回 ok 且 modified_managed_files 为 0",
+        "第二次安装为幂等且没有修改用户工作区"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "对 spec-kit-sdd 做一次安全对抗验收：在临时目录构造 .agents 父目录 symlink 指向外部 canary，确认中文安装器拒绝且外部无写入；再验证未授权 workflow run 被网关阻止、错误 locale metadata 会让 --check 非零、自定义 constitution 即使 --force 也不被覆盖。所有测试必须可恢复且不能碰真实项目。",
+      "expected_output": "四类对抗均在临时目录完成：symlink fail closed 且 canary 不变；workflow run 因缺 code-execution/project-write 授权返回 3；错误 metadata 被识别；自定义 constitution 被保护。",
+      "expectations": [
+        "symlink 测试在首次托管写入前失败且外部目录保持空",
+        "未授权 workflow run 返回 authorization_required，并列出 code-execution 与 project-write",
+        "错误 locale metadata 使 --check 返回非零并出现在 invalid_metadata",
+        "--force 后自定义 constitution 内容逐字保持不变",
+        "所有操作仅发生在明确的临时目录"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "请用中文为一个已有 Spec Kit 项目设计一次生态变更计划：添加第三方 extension、叠加 preset、安装带 shell step 的 workflow，并最终打成 bundle。不要实际联网或安装。必须给出正确的命令族、优先级/disable 语义、overlay 规则、bundle 回滚语义、所需授权与离线回退。",
+      "expected_output": "只读计划覆盖 extension/preset/workflow/step/overlay/bundle/catalog 的真实生命周期，正确解释 priority、disable、shell 无沙箱、bundle best-effort rollback，并通过网关风险模型给出分阶段授权。",
+      "expectations": [
+        "Extension/preset 的较小 priority 具有更高优先级，并区分两者 disable 的命令行为",
+        "Workflow overlay 说明大数字先应用、小数字最终赢冲突",
+        "明确 shell step 无 sandbox 且表达式不做 shell escaping",
+        "说明 bundle 安装幂等、失败回滚为 best effort 且可能残留",
+        "网络、项目写入、代码执行、删除覆盖和凭据被分别授权，且本次只输出计划不执行"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "把 Skill 内 evals/fixtures/phone-project 复制到独立临时目录，选择 local/零 Git 后端。假设‘增加手机号国家码校验’的 spec.md 已由用户批准；现在只执行 plan 阶段，不生成 tasks、不修改源码。必须实际读取 UserPhone、调用方和相邻测试，最后展示 plan 并等待用户批准。",
+      "expected_output": "计划引用真实 UserPhone._normalize_phone()、parse() 与 pytest 测试路径，选择复用或兼容扩展现有实现，沿用命名、中文 ValueError 和参数化测试风格；不得另建 phone normalizer service。列出 PB、调用方、变更前基线、回归矩阵，并停在 plan 批准关卡。",
+      "expectations": [
+        "证据顺序从目标类和同模块开始，而不是先套外部最佳实践",
+        "复用或扩展 _normalize_phone()，不创建同义 helper/service",
+        "记录未明确改变的旧输入、输出和 ValueError 语义为 PB-###",
+        "计划包含实际运行的变更前基线、目标测试和变更后同一回归命令",
+        "只生成 plan 与必要设计产物，明确停止且不越过 plan 批准关卡"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "把 Skill 内 evals/fixtures/date-range-project 复制到独立临时目录，选择 local/零 Git 后端。假设结束日期应包含在区间内的 spec 与复用原 DateRange.contains() 的 plan 都已分别获用户批准；现在只生成 tasks.md，随后强制 analyze 并展示两者等待任务批准。不要修改源码。",
+      "expected_output": "任务先运行现有基线，再在同目录测试添加一个因结束边界比较错误而失败的复现，随后最小修改原 contains()，不新增 class/method；覆盖正常区间、空区间和相邻边界，最后运行与基线相同的目标及完整测试。analyze 无 CRITICAL 后才请求 tasks 批准。",
+      "expectations": [
+        "任务明确要求修改前得到因正确原因失败的 Bug 复现",
+        "最小修改现有 DateRange.contains()，不新建方法或类",
+        "保护既有正常、异常和相邻边界行为",
+        "运行目标测试、受影响测试和项目标准完整回归",
+        "生成任务后先执行只读 analyze，再停在 tasks 批准关卡；任何 CRITICAL 都阻止请求批准"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "一个已批准的新需求实现后，新测试通过，但原有公开 API 测试从通过变为失败。用户回复‘先继续，之后再修’。请说明 SDD 应如何处理。",
+      "expected_output": "识别为绝对红线 1，立即停止所有后续和并行任务；不得接受笼统 continue、不得勾选完成或堆叠新补丁，也不能以用户批准豁免。恢复旧行为；若产品目标冲突，只能重新设计兼容适配、并行版本、迁移与独立退役流程，并重新批准产物。",
+      "expectations": [
+        "把原有公开 API 测试回退判定为不可覆盖的 CRITICAL 红线",
+        "拒绝用用户笼统的继续指令绕过",
+        "停止所有后续任务且保持相关任务未完成",
+        "用户批准也不能让当前调用方或 PB 回退；要求恢复旧行为或设计兼容迁移路径",
+        "重新规划后要求重新批准 plan 和 tasks"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "已有项目测试环境当前无法启动，也没有可靠的替代验证。我仍希望 SDD 直接实现并告诉我‘应该不会影响旧功能’。请处理。",
+      "expected_output": "拒绝实现或完成声明，报告无法建立变更前基线和验证两条红线；列出恢复测试环境、建立可重复特征测试或明确人工验证所需的下一步，等待验证能力就绪后再实施。",
+      "expectations": [
+        "没有验证能力时阻止源码实现或完成声明",
+        "不使用‘看起来正确’或‘应该没影响’作为证据",
+        "明确缺失的是变更前基线、PB 回归和项目标准测试",
+        "提供恢复环境或建立可重复验证的具体下一步",
+        "相关任务保持未勾选"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "在一个已有项目中，需求需要验证加密签名；同类现有方法只接受明文密码并会执行不可逆哈希，语义上不能安全复用。请只给出 plan 阶段的复用决策，不修改文件。",
+      "expected_output": "不得为了‘复用优先’强行调用语义不兼容的方法。先检索同类、模块、领域和项目候选；若证据证明都不适用，可提出最小的新符号 NM-001，记录候选、拒绝原因、遵循的项目样例、调用方、PB、变更预算和回归矩阵，然后等待 plan 批准。",
+      "expectations": [
+        "明确复用优先不等于强行复用语义不兼容的实现",
+        "记录至少同类、同模块、同领域、同项目的候选检索证据",
+        "新符号具有稳定 NM-###、具体不可复用理由和既有风格样例",
+        "没有用户批准的当前 plan 就不得进入 tasks 或实现",
+        "新符号仍受 PB、调用方和完整回归矩阵约束"
+      ]
+    }
+  ]
+}

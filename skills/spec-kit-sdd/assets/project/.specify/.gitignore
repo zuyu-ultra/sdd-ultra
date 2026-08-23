@@ -1,0 +1,8 @@
+# Spec Kit 的机器本地状态，不应在团队间共享。
+# 由 Specify CLI 管理；可以编辑，刷新时会保留用户改动。
+
+# 当前活动功能目录的本地指针。切换功能时会重写，因此属于每个 checkout 的本地状态。
+feature.json
+
+# 每台机器自己的 extension 配置覆盖。
+extensions/*/local-config.yml

@@ -1,0 +1,37 @@
+{
+  "repository": "https://github.com/github/spec-kit",
+  "commit": "83883a2ebad7e7de667fd00381b100d597faf846",
+  "version": "0.16.4.dev0",
+  "python": ">=3.11",
+  "license": "MIT",
+  "cli_leaf_commands": 84,
+  "integrations": 38,
+  "agentic_commands": 10,
+  "helper_scripts": {
+    "bash": 6,
+    "powershell": 6,
+    "python": 6
+  },
+  "upstream_test_files": 142,
+  "vendored_file_count": 539,
+  "wheel_count": 28,
+  "source_manifest_sha256": "229beef312b09f1e064e215f52924b85f711db3df1858b4265c7dfd0a548916b",
+  "wheelhouse_manifest_sha256": "ff57051ae478f01e8ac527022dd3624f73b1494dcbd301023dcc0b7bbdcf914f",
+  "capability_map_sha256": "28dd7b8ebb765aecbd68f67e53f607b2708891272416e2ac8e786c1ecb227769",
+  "license_sha256": "2510b446bc1f0cf9702453075d20cd88631e20e5642658edb7325d9c1eb534f7",
+  "bundled_extensions": [
+    "agent-context",
+    "assess",
+    "bug",
+    "git"
+  ],
+  "bundled_presets": [
+    "constitution-sync",
+    "lean"
+  ],
+  "bundled_workflows": [
+    "speckit"
+  ],
+  "vendored_source": "vendor/spec-kit",
+  "source_policy": "除 Git object database 外，官方仓库全部 539 个文件保持原样镜像；中文能力通过 Skill 控制面和项目叠加层提供。"
+}

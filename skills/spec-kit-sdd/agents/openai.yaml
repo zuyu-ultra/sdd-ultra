@@ -1,0 +1,4 @@
+interface:
+  display_name: "Spec Kit 中文全能力"
+  short_description: "完整中文 SDD、任务后端选择、人工确认关卡与安全执行"
+  default_prompt: "使用 $spec-kit-sdd 开展中文 SDD：先选择本地 tasks.md 或 GitLab Issues，并在 spec、plan、tasks 生成后分别等待我的明确批准。"
